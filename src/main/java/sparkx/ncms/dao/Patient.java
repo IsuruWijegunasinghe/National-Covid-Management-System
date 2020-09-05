@@ -17,6 +17,9 @@ public class Patient {
     private String dischargeDate;
     private String dischargedBy;
 
+    public Patient() {
+    }
+
     public Patient(String patientID, String firstName, String lastName, String district, int coordinateX, int coordinateY, String severityLevel, String gender, String contactNo, String email, int age, String admitDate, String admittedBy, String dischargeDate, String dischargedBy) {
         this.patientID = patientID;
         this.firstName = firstName;
