@@ -4,11 +4,11 @@ public class Hospital {
     private String hospitalID;
     private String name;
     private String district;
-    private String coordinateX;
-    private String coordinateY;
+    private int coordinateX;
+    private int coordinateY;
     private String buildDate;
 
-    public Hospital(String hospitalID, String name, String district, String coordinateX, String coordinateY, String buildDate) {
+    public Hospital(String hospitalID, String name, String district, int coordinateX, int coordinateY, String buildDate) {
         this.hospitalID = hospitalID;
         this.name = name;
         this.district = district;
@@ -41,19 +41,19 @@ public class Hospital {
         this.district = district;
     }
 
-    public String getCoordinateX() {
+    public int getCoordinateX() {
         return coordinateX;
     }
 
-    public void setCoordinateX(String coordinateX) {
+    public void setCoordinateX(int coordinateX) {
         this.coordinateX = coordinateX;
     }
 
-    public String getCoordinateY() {
+    public int getCoordinateY() {
         return coordinateY;
     }
 
-    public void setCoordinateY(String coordinateY) {
+    public void setCoordinateY(int coordinateY) {
         this.coordinateY = coordinateY;
     }
 

@@ -1,7 +1,9 @@
 package sparkx.ncms.controller;
 
 import com.google.gson.JsonObject;
+import sparkx.ncms.dao.Hospital;
 import sparkx.ncms.dao.Patient;
+import sparkx.ncms.service.HospitalService;
 import sparkx.ncms.service.PatientService;
 
 import javax.servlet.ServletException;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @WebServlet(name = "PatientServlet")
 public class PatientServlet extends HttpServlet {
@@ -44,6 +47,10 @@ public class PatientServlet extends HttpServlet {
         patientService.patient.setAge(age);
 
         patientService.savePatient();
+
+        HospitalService hospitalService = new HospitalService();
+        List<Hospital> availableHospitals = hospitalService.getAvailableHospitals();
+        Hospital assignedHospital = patientService.assignHospital(availableHospitals);
 
     }
 
