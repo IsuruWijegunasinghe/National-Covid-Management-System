@@ -1,12 +1,13 @@
 package sparkx.ncms.controller;
 
-import com.google.gson.JsonObject;
 import sparkx.ncms.dao.Hospital;
 import sparkx.ncms.dao.Patient;
 import sparkx.ncms.service.HospitalService;
 import sparkx.ncms.service.PatientService;
 
+import javax.json.JsonObject;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ public class PatientServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /*
         String firstName = req.getParameter("firstName");
         String lastName = req.getParameter("lastName");
         String district = req.getParameter("district");
@@ -34,6 +36,17 @@ public class PatientServlet extends HttpServlet {
         String contactNo = req.getParameter("contactNo");
         String email = req.getParameter("email");
         int age = Integer.parseInt(req.getParameter("age"));
+        */
+        JsonObject jsonObject = Util.getJsonObject(req);
+        String firstName = jsonObject.getString("firstName");
+        String lastName = jsonObject.getString("lastName");
+        String district = jsonObject.getString("district");
+        int coordinateX = Integer.parseInt(jsonObject.getString("coordinateX"));
+        int coordinateY = Integer.parseInt(jsonObject.getString("coordinateY"));
+        String gender = jsonObject.getString("gender");
+        String contactNo = jsonObject.getString("contactNo");
+        String email = jsonObject.getString("email");
+        int age = Integer.parseInt(jsonObject.getString("age"));
 
         PatientService patientService = new PatientService();
         patientService.patient.setFirstName(firstName);
@@ -52,15 +65,8 @@ public class PatientServlet extends HttpServlet {
         List<Hospital> availableHospitals = hospitalService.getAvailableHospitals();
         Hospital assignedHospital = patientService.assignHospital(availableHospitals);
 
-    }
-
-    private void sendResponse(String data, HttpServletResponse resp) throws IOException
-    {
-        resp.setContentType("application/json");
-        PrintWriter writer = resp.getWriter();
-        JsonObject json = new JsonObject();
-        json.addProperty("Response", data);
-        writer.print(json.toString());
-        writer.flush();
+        // Test
+        PrintWriter out = resp.getWriter();
+        out.println("Patient servlet");
     }
 }
