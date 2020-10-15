@@ -1,15 +1,14 @@
 package sparkx.ncms.service;
 
 import sparkx.ncms.dao.Hospital;
+import sparkx.ncms.dao.HospitalBed;
 import sparkx.ncms.dao.Patient;
 import sparkx.ncms.repository.PatientRepo;
 
 import java.util.List;
 
 public class PatientService {
-    public Patient patient = new Patient();
-
-    public void savePatient(){
+    public void savePatient(Patient patient){
         PatientRepo patientRepo = new PatientRepo();
 
         String firstName = patient.getFirstName();
@@ -22,10 +21,10 @@ public class PatientService {
         String email = patient.getEmail();
         int age = patient.getAge();
 
-        patientRepo.insertQuery(firstName, lastName, district, coordinateX, coordinateY, gender, contactNo, email, age);
+        patientRepo.insertPatient(firstName, lastName, district, coordinateX, coordinateY, gender, contactNo, email, age);
     }
 
-    public Hospital assignHospital(List<Hospital> availableHospitals){
+    public Hospital assignHospital(Patient patient, List<Hospital> availableHospitals){
         int patientCoordinateX = patient.getCoordinateX();
         int patientCoordinateY = patient.getCoordinateY();
 

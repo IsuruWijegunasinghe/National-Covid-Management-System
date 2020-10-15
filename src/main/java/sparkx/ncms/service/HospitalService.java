@@ -20,4 +20,8 @@ public class HospitalService {
 
         return availableBeds;
     }
+
+    public void buildHospital(){  //Build a new Hospital
+
+    }
 }
