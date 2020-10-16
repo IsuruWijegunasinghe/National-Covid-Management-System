@@ -1,8 +1,13 @@
 package sparkx.ncms.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.json.JSONArray;
 import sparkx.ncms.dao.Hospital;
 import sparkx.ncms.dao.HospitalBed;
 import sparkx.ncms.dao.Patient;
+import sparkx.ncms.dto.PatientCount;
+import sparkx.ncms.dto.PatientDto;
 import sparkx.ncms.service.HospitalService;
 import sparkx.ncms.service.PatientService;
 
@@ -20,12 +25,53 @@ import java.util.Random;
 
 @WebServlet(name = "PatientServlet")
 public class PatientServlet extends HttpServlet {
+    private PatientService patientService = new PatientService();
+    private HospitalService hospitalService = new HospitalService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Test
         PrintWriter out = resp.getWriter();
-        out.println("Patient servlet");
+        switch (req.getPathInfo()){
+            case "/PatientCount":
+                try {
+                    PatientCount patientCount = patientService.getPatientCount();
+                    ObjectMapper mapper = new ObjectMapper();
+                    String jsonString = mapper.writeValueAsString(patientCount);
+                    out.println(patientCount);
+                    Util.sendResponse(resp,jsonString);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    return;
+                }
+                break;
+
+            case "/PatientInfo":
+                try {
+                    PatientDto patientDto = patientService.getPatientInfo(req.getParameter("patientID"));
+                    ObjectMapper mapper = new ObjectMapper();
+                    String jsonString = mapper.writeValueAsString(patientDto);
+                    out.println(patientDto.toString());
+                    Util.sendResponse(resp,jsonString);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    return;
+                }
+
+                break;
+            /*
+            case "/AllPatientInfo":
+                List<PatientDto> patientList = patientService.getAllPatient();
+                //out.println(patientList);
+
+                //out.println("Patient servlet GET AllPatientInfo");
+                break;
+            */
+        }
+
+        // Test
+        out.println("Patient servlet GET");
     }
 
     @Override
@@ -52,10 +98,16 @@ public class PatientServlet extends HttpServlet {
         patient.setEmail(email);
         patient.setAge(age);
 
-        PatientService patientService = new PatientService();
-        patientService.savePatient(patient);
+        try {
+            patientService.savePatient(patient);
+            // Need to add response
+        }catch (Exception e){
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            return;
+        }
 
-        HospitalService hospitalService = new HospitalService();
+        /*
         List<Hospital> availableHospitals = hospitalService.getAvailableHospitals();
 
         if (availableHospitals.isEmpty()){
@@ -68,8 +120,26 @@ public class PatientServlet extends HttpServlet {
         Random rand = new Random();
         HospitalBed assignedHospitalBed = availableHospitalBeds.get(rand.nextInt(availableHospitalBeds.size()));
 
+         */
+
         // Test
         PrintWriter out = resp.getWriter();
-        out.println("Patient servlet");
+        out.println("Patient servlet POST");
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String patientId = req.getParameter("patientId");
+        String doctorId = req.getParameter("doctorId");
+        String severityLevel = req.getParameter("severityLevel");
+
+        try {
+            patientService.updatePatient(patientId, doctorId, severityLevel);
+            // Need to add response
+        }catch (Exception e){
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            return;
+        }
     }
 }

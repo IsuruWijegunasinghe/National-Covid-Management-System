@@ -3,14 +3,20 @@ package sparkx.ncms.service;
 import sparkx.ncms.dao.Hospital;
 import sparkx.ncms.dao.HospitalBed;
 import sparkx.ncms.dao.Patient;
+import sparkx.ncms.dto.PatientCount;
+import sparkx.ncms.dto.PatientDto;
 import sparkx.ncms.repository.PatientRepo;
 
 import java.util.List;
 
 public class PatientService {
-    public void savePatient(Patient patient){
-        PatientRepo patientRepo = new PatientRepo();
+    private PatientRepo patientRepo;
 
+    public PatientService() {
+        patientRepo = new PatientRepo();
+    }
+
+    public void savePatient(Patient patient){
         String firstName = patient.getFirstName();
         String lastName = patient.getLastName();
         String district = patient.getDistrict();
@@ -22,6 +28,10 @@ public class PatientService {
         int age = patient.getAge();
 
         patientRepo.insertPatient(firstName, lastName, district, coordinateX, coordinateY, gender, contactNo, email, age);
+    }
+
+    public void updatePatient(String patientID, String doctorID, String severityLevel){
+        patientRepo.updatePatient(patientID, doctorID, severityLevel);
     }
 
     public Hospital assignHospital(Patient patient, List<Hospital> availableHospitals){
@@ -45,5 +55,20 @@ public class PatientService {
             }
         }
         return nearestHospital;
+    }
+
+    public PatientCount getPatientCount(){
+        PatientCount patientCount = patientRepo.getPatientCount();
+        return patientCount;
+    }
+
+    public PatientDto getPatientInfo(String patientID){
+        PatientDto patientDto = patientRepo.selectPatient(patientID);
+        return patientDto;
+    }
+
+    public List<PatientDto> getAllPatient(){
+        List<PatientDto> patientList = patientRepo.selectAllPatient();
+        return patientList;
     }
 }
