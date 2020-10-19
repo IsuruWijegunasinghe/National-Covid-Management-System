@@ -98,6 +98,9 @@ public class PatientServlet extends HttpServlet {
         patient.setEmail(email);
         patient.setAge(age);
 
+
+
+        /*
         try {
             patientService.savePatient(patient);
             // Need to add response
@@ -106,7 +109,7 @@ public class PatientServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
-
+        */
         /*
         List<Hospital> availableHospitals = hospitalService.getAvailableHospitals();
 
@@ -125,6 +128,7 @@ public class PatientServlet extends HttpServlet {
         // Test
         PrintWriter out = resp.getWriter();
         out.println("Patient servlet POST");
+        Util.sendResponse(resp,"POST");
     }
 
     @Override

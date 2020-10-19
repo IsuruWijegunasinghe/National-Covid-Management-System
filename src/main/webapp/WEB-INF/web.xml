@@ -13,4 +13,30 @@
         <servlet-name>PatientServlet</servlet-name>
         <url-pattern>/Patient/*</url-pattern>
     </servlet-mapping>
+
+    <!--
+    <servlet-mapping>
+        <servlet-name>HospitalServlet</servlet-name>
+        <url-pattern>/Hospital/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MoHServlet</servlet-name>
+        <url-pattern>/MoH/*</url-pattern>
+    </servlet-mapping>
+    -->
+
+    <!--
+    <filter>
+        <filter-name>CORS</filter-name>
+        <filter-class>
+            com.thetransactioncompany.cors.CORSFilter
+        </filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CORS</filter-name>
+        <url-pattern>/Patient/*</url-pattern>
+    </filter-mapping>
+    -->
 </web-app>

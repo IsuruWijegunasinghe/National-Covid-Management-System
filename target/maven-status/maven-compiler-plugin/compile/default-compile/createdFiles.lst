@@ -1,0 +1,17 @@
+sparkx\ncms\service\HospitalBedService.class
+sparkx\ncms\dto\PatientDto.class
+sparkx\ncms\dao\Patient.class
+sparkx\ncms\dao\Hospital.class
+sparkx\ncms\service\HospitalService.class
+sparkx\ncms\dao\PatientQueue.class
+sparkx\ncms\controller\Util.class
+sparkx\ncms\service\PatientService.class
+sparkx\ncms\controller\HospitalServlet.class
+sparkx\ncms\dao\HospitalBed.class
+sparkx\ncms\repository\PatientRepo.class
+sparkx\ncms\dto\PatientCount.class
+sparkx\ncms\db\DBConnectionPool.class
+sparkx\ncms\controller\MoHServlet.class
+sparkx\ncms\controller\PatientServlet.class
+sparkx\ncms\dao\Doctor.class
+sparkx\ncms\repository\HospitalRepo.class
