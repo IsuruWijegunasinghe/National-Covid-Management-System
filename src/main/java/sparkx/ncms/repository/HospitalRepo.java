@@ -60,19 +60,17 @@ public class HospitalRepo {
         return rs;
     }
 
-    public ResultSet addNewHospital(String name, String district, int coordinateX, int coordinateY)
+    public ResultSet addNewHospital(String hospitalID, String name, String district, int coordinateX, int coordinateY)
     {
         ResultSet rs = null;
         Connection con = null;
         PreparedStatement stmt = null;
         try
         {
-            UUID uuid = UUID.randomUUID();
-
             con = DBConnectionPool.getInstance().getConnection();
             stmt = con.prepareStatement("INSERT INTO hospital (hospitalID, name, district, coordinateX, coordinateY, buildDate) VALUES (?,?,?,?,?,?)");
 
-            stmt.setString(1, uuid.toString());
+            stmt.setString(1, hospitalID);
             stmt.setString(2, name);
             stmt.setString(3, district);
             stmt.setInt(4, coordinateX);

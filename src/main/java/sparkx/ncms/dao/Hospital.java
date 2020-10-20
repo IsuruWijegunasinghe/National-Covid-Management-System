@@ -8,6 +8,9 @@ public class Hospital {
     private int coordinateY;
     private String buildDate;
 
+    public Hospital() {
+    }
+
     public Hospital(String hospitalID, String name, String district, int coordinateX, int coordinateY, String buildDate) {
         this.hospitalID = hospitalID;
         this.name = name;

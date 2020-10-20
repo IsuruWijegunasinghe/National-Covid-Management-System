@@ -14,17 +14,35 @@
         <url-pattern>/Patient/*</url-pattern>
     </servlet-mapping>
 
-    <!--
+    <servlet>
+        <servlet-name>DoctorServlet</servlet-name>
+        <servlet-class>sparkx.ncms.controller.PatientServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DoctorServlet</servlet-name>
+        <url-pattern>/Doctor/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>HospitalServlet</servlet-name>
+        <servlet-class>sparkx.ncms.controller.HospitalServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>HospitalServlet</servlet-name>
         <url-pattern>/Hospital/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MoHServlet</servlet-name>
+        <servlet-class>sparkx.ncms.controller.MoHServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>MoHServlet</servlet-name>
         <url-pattern>/MoH/*</url-pattern>
     </servlet-mapping>
-    -->
 
     <!--
     <filter>
