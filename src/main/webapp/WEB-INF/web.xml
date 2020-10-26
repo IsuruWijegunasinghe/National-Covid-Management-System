@@ -16,7 +16,7 @@
 
     <servlet>
         <servlet-name>DoctorServlet</servlet-name>
-        <servlet-class>sparkx.ncms.controller.PatientServlet</servlet-class>
+        <servlet-class>sparkx.ncms.controller.DoctorServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -42,6 +42,16 @@
     <servlet-mapping>
         <servlet-name>MoHServlet</servlet-name>
         <url-pattern>/MoH/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserServlet</servlet-name>
+        <servlet-class>sparkx.ncms.controller.UserServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserServlet</servlet-name>
+        <url-pattern>/Authentication/*</url-pattern>
     </servlet-mapping>
 
     <!--

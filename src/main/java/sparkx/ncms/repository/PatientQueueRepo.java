@@ -19,7 +19,7 @@ public class PatientQueueRepo {
         try
         {
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("INSERT INTO patient_queue(patientID) VALUES (?)");
+            stmt = con.prepareStatement("INSERT INTO patient_queue(patient_id) VALUES (?)");
             stmt.setString(1,patientID);
 
             int changedRows = stmt.executeUpdate();
@@ -46,7 +46,7 @@ public class PatientQueueRepo {
         try
         {
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("SELECT patientID FROM patient_queue");
+            stmt = con.prepareStatement("SELECT patient_id FROM patient_queue");
 
             rs = stmt.executeQuery();
             while (rs.next()){

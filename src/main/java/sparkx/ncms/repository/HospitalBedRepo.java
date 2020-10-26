@@ -20,7 +20,7 @@ public class HospitalBedRepo {
         try
         {
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("SELECT DISTINCT hospitalID FROM hospital_bed WHERE patientID IS NULL");
+            stmt = con.prepareStatement("SELECT DISTINCT hospital_id FROM hospital_bed WHERE patient_id IS NULL");
 
             rs = stmt.executeQuery();
             while (rs.next()){
@@ -42,7 +42,9 @@ public class HospitalBedRepo {
     }
 
     public void updateBed(String patientID, String bedID, String severityLevel) {
-        /* Severity Level = -1 --> Discharging the patient */
+        /* Severity Level = -1 --> Discharging the patient
+        Severity Level = 0 --> Severity Level not assessed
+        */
 
         ResultSet rs = null;
         Connection con = null;
@@ -50,7 +52,7 @@ public class HospitalBedRepo {
         try
         {
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("UPDATE hospital_bed SET patientID=? where bedID=?");
+            stmt = con.prepareStatement("UPDATE hospital_bed SET patient_id=? where id=?");
             if (severityLevel == "-1") {
                 stmt.setObject(1,null);
                 stmt.setString(2,bedID);

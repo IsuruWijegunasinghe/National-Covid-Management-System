@@ -1,5 +1,6 @@
 package sparkx.ncms.repository;
 
+import sparkx.ncms.dao.Hospital;
 import sparkx.ncms.dao.Patient;
 import sparkx.ncms.db.DBConnectionPool;
 import sparkx.ncms.dto.PatientCount;
@@ -12,8 +13,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class PatientRepo {
-    public void insertPatient(String firstName, String lastName, String district, int coordinateX, int coordinateY, String gender, String contactNo, String email, int age)
+    public String insertPatient(String firstName, String lastName, String district, int coordinateX, int coordinateY, String gender, String contactNo, String email, int age)
     {
+        String patientID = null;
         ResultSet rs = null;
         Connection con = null;
         PreparedStatement stmt = null;
@@ -22,7 +24,7 @@ public class PatientRepo {
             UUID uuid = UUID.randomUUID();
 
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("INSERT INTO patient (serialNo, firstName, lastName, district, coordinateX, coordinateY, severityLevel, gender, contactNo, email, age, admitDate, admittedBy, dischargeDate, dischargedBy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO patient (id, first_name, last_name, district, location_x, location_y, severity_level, gender, contact, email, age, admit_date, admitted_by, discharge_date, discharged_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             stmt.setString(1, uuid.toString());
             stmt.setString(2, firstName);
@@ -41,6 +43,9 @@ public class PatientRepo {
             stmt.setString(15, null);
 
             int changedRows = stmt.executeUpdate();
+            if(changedRows == 1){
+                patientID = uuid.toString();
+            }
             System.out.println( changedRows == 1 ? "Successfully inserted" : "Insertion failed");
         }
         catch(SQLException e)
@@ -53,32 +58,37 @@ public class PatientRepo {
             DBConnectionPool.getInstance().close(stmt);
             DBConnectionPool.getInstance().close(con);
         }
+        return patientID;
     }
 
-    public void updatePatient(String patientID, String doctorID, String severityLevel) {
+    public Boolean updatePatient(String patientID, String doctorID, String severityLevel) {
         /* Severity Level = -1 --> Discharging the patient */
 
+        Boolean success = false;
         ResultSet rs = null;
         Connection con = null;
         PreparedStatement stmt = null;
         try {
             con = DBConnectionPool.getInstance().getConnection();
             if (severityLevel == "-1") {
-                stmt = con.prepareStatement("UPDATE patient SET dischargeDate = ?, dischargedBy = ? WHERE patientID = ?");
+                stmt = con.prepareStatement("UPDATE patient SET discharge_date = ?, discharged_by = ? WHERE id = ?");
 
                 stmt.setDate(1, (Date) Calendar.getInstance().getTime());
                 stmt.setString(2, doctorID);
                 stmt.setString(3, patientID);
             } else {
-                stmt = con.prepareStatement("UPDATE patient SET severityLevel = ?, admitDate = ?, admittedBy = ? WHERE patientID = ?");
+                stmt = con.prepareStatement("UPDATE patient SET severity_level = ?, admit_date = ?, admitted_by = ? WHERE id = ?");
 
                 stmt.setString(1, severityLevel);
-                stmt.setDate(2, (Date) Calendar.getInstance().getTime());
+                stmt.setDate(2, new Date(Calendar.getInstance().getTime().getTime()));
                 stmt.setString(3, doctorID);
                 stmt.setString(4, patientID);
             }
 
             int changedRows = stmt.executeUpdate();
+            if(changedRows == 1){
+                success = true;
+            }
             System.out.println(changedRows == 1 ? "Successfully updated" : "Update failed");
 
         } catch (SQLException e) {
@@ -88,6 +98,7 @@ public class PatientRepo {
             DBConnectionPool.getInstance().close(stmt);
             DBConnectionPool.getInstance().close(con);
         }
+        return success;
     }
 
     public List<PatientDto> selectAllPatient()
@@ -132,12 +143,14 @@ public class PatientRepo {
         try
         {
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("SELECT * FROM patient WHERE patientID = ?");
+            stmt = con.prepareStatement("SELECT * FROM patient WHERE id = ?");
             stmt.setString(1, patientID);
 
             rs = stmt.executeQuery();
+            System.out.println(rs);
             while (rs.next()) {
                 patientDto.setPatientID(rs.getString(1));
+                System.out.println(rs.getString(1));
                 patientDto.setFirstName(rs.getString(2));
                 patientDto.setLastName(rs.getString(3));
                 patientDto.setDistrict(rs.getString(4));
@@ -167,19 +180,34 @@ public class PatientRepo {
         return patientDto;
     }
 
-    public PatientCount getPatientCount()
+    public List<PatientCount> getPatientCount()
     {
-        PatientCount patientCount = new PatientCount();
+        List<PatientCount> patientCount = new ArrayList<>();
         ResultSet rs = null;
         Connection con = null;
         PreparedStatement stmt = null;
         try
         {
             con = DBConnectionPool.getInstance().getConnection();
-            stmt = con.prepareStatement("SELECT COUNT(patientID) FROM patient WHERE dischargeDate IS NULL");
-
+            stmt = con.prepareStatement("SELECT * FROM hospital");
             rs = stmt.executeQuery();
-            patientCount.setPatientCount(rs.getInt(1));
+            List<Hospital> allHospitals = new ArrayList<>();
+            while (rs.next()){
+                allHospitals.add(new Hospital(rs.getString(1), rs.getString(2), rs.getString(3),
+                        rs.getInt(4), rs.getInt(5), rs.getString(6)));
+            }
+
+            for (Hospital hospital : allHospitals){
+                stmt = con.prepareStatement("SELECT COUNT(patient_id) FROM hospital_bed WHERE hospital_id = ?");
+                stmt.setString(1, hospital.getHospitalID());
+
+                rs = stmt.executeQuery();
+                while (rs.next()){
+                    patientCount.add(new PatientCount(hospital.getHospitalID(), hospital.getDistrict(), rs.getInt(1)));
+                    System.out.println(rs.getInt(1));
+                }
+            }
+
         }
         catch(SQLException e)
         {

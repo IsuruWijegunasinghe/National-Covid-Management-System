@@ -11,7 +11,10 @@ import sparkx.ncms.dto.PatientDto;
 import sparkx.ncms.service.HospitalService;
 import sparkx.ncms.service.PatientService;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
@@ -34,10 +37,10 @@ public class PatientServlet extends HttpServlet {
         switch (req.getPathInfo()){
             case "/PatientCount":
                 try {
-                    PatientCount patientCount = patientService.getPatientCount();
+                    List<PatientCount> patientCount = patientService.getPatientCount();
                     ObjectMapper mapper = new ObjectMapper();
                     String jsonString = mapper.writeValueAsString(patientCount);
-                    out.println(patientCount);
+                    //out.println(patientCount);
                     Util.sendResponse(resp,jsonString);
                 }catch (Exception e){
                     e.printStackTrace();
@@ -48,6 +51,7 @@ public class PatientServlet extends HttpServlet {
 
             case "/PatientInfo":
                 try {
+                    System.out.println(req.getParameter("patientID"));
                     PatientDto patientDto = patientService.getPatientInfo(req.getParameter("patientID"));
                     ObjectMapper mapper = new ObjectMapper();
                     String jsonString = mapper.writeValueAsString(patientDto);
@@ -60,23 +64,36 @@ public class PatientServlet extends HttpServlet {
                 }
 
                 break;
-            /*
-            case "/AllPatientInfo":
-                List<PatientDto> patientList = patientService.getAllPatient();
-                //out.println(patientList);
 
-                //out.println("Patient servlet GET AllPatientInfo");
+            case "/AllPatientInfo":
+                try{
+                    List<PatientDto> patientList = patientService.getAllPatient();
+                    ObjectMapper mapper = new ObjectMapper();
+                    String jsonString = mapper.writeValueAsString(patientList);
+                    //out.println(patientCount);
+                    Util.sendResponse(resp,jsonString);
+                    //out.println(patientList);
+
+                    //out.println("Patient servlet GET AllPatientInfo");
+                }catch (Exception e){
+                    e.printStackTrace();
+                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    return;
+                }
+
                 break;
-            */
+
         }
 
         // Test
-        out.println("Patient servlet GET");
+        //out.println("Patient servlet GET");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JsonObject jsonObject = Util.getJsonObject(req);
+        //System.out.println(jsonObject);
+
         String firstName = jsonObject.getString("firstName");
         String lastName = jsonObject.getString("lastName");
         String district = jsonObject.getString("district");
@@ -97,19 +114,36 @@ public class PatientServlet extends HttpServlet {
         patient.setContactNo(contactNo);
         patient.setEmail(email);
         patient.setAge(age);
+        //System.out.println(patient);
 
-
-
-        /*
         try {
-            patientService.savePatient(patient);
-            // Need to add response
+            String patientID = patientService.savePatient(patient);
+            Hospital assignedHospital;
+            String assignedBed;
+            if(patientID.equals(null)){
+                assignedHospital = null;
+                assignedBed = null;
+            }else{
+                List<Hospital> availableHospitals = hospitalService.getAvailableHospitals();
+                assignedHospital = patientService.assignHospital(patient, availableHospitals);
+                assignedBed = hospitalService.getAvailableBeds(assignedHospital.getHospitalID()).get(0);
+                hospitalService.updateBed(patientID,assignedBed,"0");
+            }
+
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("patientID",patientID);
+            response.add("assignedHospital", assignedHospital.getName());
+            response.add("assignedBed", assignedBed);
+            PrintWriter writer = resp.getWriter();
+            writer.print(response.build());
+            System.out.println(response.toString());
+
         }catch (Exception e){
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
-        */
+
         /*
         List<Hospital> availableHospitals = hospitalService.getAvailableHospitals();
 
@@ -126,13 +160,17 @@ public class PatientServlet extends HttpServlet {
          */
 
         // Test
+        /*
+        System.out.println("Patient Registered");
         PrintWriter out = resp.getWriter();
         out.println("Patient servlet POST");
         Util.sendResponse(resp,"POST");
+        */
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /*
         String patientId = req.getParameter("patientId");
         String doctorId = req.getParameter("doctorId");
         String severityLevel = req.getParameter("severityLevel");
@@ -145,5 +183,6 @@ public class PatientServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             return;
         }
+         */
     }
 }

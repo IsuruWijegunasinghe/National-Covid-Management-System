@@ -16,7 +16,9 @@ public class PatientService {
         patientRepo = new PatientRepo();
     }
 
-    public void savePatient(Patient patient){
+    public String savePatient(Patient patient){
+        String patientID = null;
+
         String firstName = patient.getFirstName();
         String lastName = patient.getLastName();
         String district = patient.getDistrict();
@@ -27,11 +29,12 @@ public class PatientService {
         String email = patient.getEmail();
         int age = patient.getAge();
 
-        patientRepo.insertPatient(firstName, lastName, district, coordinateX, coordinateY, gender, contactNo, email, age);
+        patientID = patientRepo.insertPatient(firstName, lastName, district, coordinateX, coordinateY, gender, contactNo, email, age);
+        return patientID;
     }
 
-    public void updatePatient(String patientID, String doctorID, String severityLevel){
-        patientRepo.updatePatient(patientID, doctorID, severityLevel);
+    public Boolean updatePatient(String patientID, String doctorID, String severityLevel){
+        return patientRepo.updatePatient(patientID, doctorID, severityLevel);
     }
 
     public Hospital assignHospital(Patient patient, List<Hospital> availableHospitals){
@@ -57,8 +60,8 @@ public class PatientService {
         return nearestHospital;
     }
 
-    public PatientCount getPatientCount(){
-        PatientCount patientCount = patientRepo.getPatientCount();
+    public List<PatientCount> getPatientCount(){
+        List<PatientCount> patientCount = patientRepo.getPatientCount();
         return patientCount;
     }
 
